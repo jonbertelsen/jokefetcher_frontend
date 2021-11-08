@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { v4 as uuid } from 'uuid';
 
-function Webscraper({ facade }) {
+function Webscraper({ facade, setErrorMessage }) {
   const [parallelFetch, setParallelFetch] = useState({
     title: '',
     timeSpent: '',
@@ -14,8 +14,6 @@ function Webscraper({ facade }) {
     timeSpent: '',
     tags: [],
   });
-
-  const [errorMessage, setErrorMessage] = useState('All is good... so far');
 
   const updateParallel = (data) => {
     setParallelFetch({
@@ -33,14 +31,10 @@ function Webscraper({ facade }) {
     });
   };
 
-  const errorResponse = (e) => {
-    setErrorMessage(e.message);
-  };
-
   useEffect(() => {
-    facade.fetchData('scrape/parallel', updateParallel, errorResponse);
-    facade.fetchData('scrape/sequental', updateSequential, errorResponse);
-  }, [facade]);
+    facade.fetchData('scrape/parallel', updateParallel, setErrorMessage);
+    facade.fetchData('scrape/sequental', updateSequential, setErrorMessage);
+  }, [facade, setErrorMessage]);
 
   return (
     <>
@@ -76,7 +70,6 @@ function Webscraper({ facade }) {
           </ul>
         </Col>
       </Row>
-      <p>Status: {errorMessage}</p>
     </>
   );
 }

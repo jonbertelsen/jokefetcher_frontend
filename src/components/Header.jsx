@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 
-function Header({ facade }) {
+function Header({ facade, loggedIn }) {
   return (
     <div>
       <ul className="header">
@@ -9,14 +9,14 @@ function Header({ facade }) {
             Home
           </NavLink>
         </li>
-        {facade.hasUserAccess('user') && (
+        {facade.hasUserAccess('user', loggedIn) && (
           <li>
             <NavLink activeClassName="active" to="/jokes">
               Jokes
             </NavLink>
           </li>
         )}
-        {facade.hasUserAccess('admin') && (
+        {facade.hasUserAccess('admin', loggedIn) && (
           <li>
             <NavLink activeClassName="active" to="/webscraper">
               Webscraper

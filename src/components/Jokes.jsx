@@ -3,7 +3,7 @@ import chuck from '../images/chux.jpg';
 import dad from '../images/dad.jpg';
 import { Row, Col, Image } from 'react-bootstrap';
 
-function Jokes({ facade }) {
+function Jokes({ facade, setErrorMessage }) {
   const [chuckJoke, setChuckJoke] = useState({ joke: '', ref: '' });
   const [dadJoke, setDadJoke] = useState({ joke: '', ref: '' });
 
@@ -16,8 +16,8 @@ function Jokes({ facade }) {
   };
 
   useEffect(() => {
-    facade.fetchData('jokes', updateChuckJokes, null);
-  }, [facade]);
+    facade.fetchData('jokes', updateChuckJokes, setErrorMessage);
+  }, [facade, setErrorMessage]);
 
   return (
     <>

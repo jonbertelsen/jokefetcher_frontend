@@ -1,4 +1,4 @@
-const URL = "http://localhost:8080/jokeFetcher";
+const URL = "http://localhost:8080/jokefetcher";
 
 function handleHttpErrors(res)
 {
@@ -12,7 +12,7 @@ function handleHttpErrors(res)
 let apiFacade = () =>
 {
 
-    const fetchData = (endpoint, updateAction, errorResponse) =>
+    const fetchData = (endpoint, updateAction, SetErrorMessage) =>
     {
         const options = makeOptions("GET", true); //True add's the token
         return fetch(URL + "/api/" + endpoint, options)
@@ -23,10 +23,33 @@ let apiFacade = () =>
                 if (err.status)
                 {
                     console.log(err)
-                    err.fullError.then(e => errorResponse(e.code + ": " + e.message))
+                    err.fullError.then(e => SetErrorMessage(e.code + ": " + e.message))
                 }
-                else { errorResponse("Network error"); }
+                else { SetErrorMessage("Network error"); }
             })
+    }
+
+    const login = (user, password, setLoggedIn, setErrorMessage) =>
+    {
+        const options = makeOptions("POST", true, { username: user, password: password });
+        return fetch(URL + "/api/login", options)
+            .then(handleHttpErrors)
+            .then(res =>
+            {
+                setToken(res.token)
+                setLoggedIn(true);
+                setErrorMessage('Logged in');
+            })
+            .catch((err) =>
+            {
+                if (err.status)
+                {
+                    err.fullError.then((e) => setErrorMessage(e.code + ': ' + e.message));
+                } else
+                {
+                    setErrorMessage('Network error');
+                }
+            });
     }
 
     // Security funktionalitet
@@ -61,20 +84,10 @@ let apiFacade = () =>
         } else return ""
     }
 
-    const hasUserAccess = (neededRole) =>
+    const hasUserAccess = (neededRole, loggedIn) =>
     {
         const roles = getUserRoles().split(',')
-        console.log('roles', roles, roles.includes(neededRole))
-        return roles.includes(neededRole)
-    }
-
-    const login = (user, password) =>
-    {
-        const options = makeOptions("POST", true, { username: user, password: password });
-        return fetch(URL + "/api/login", options)
-            .then(handleHttpErrors)
-            .then(res => { setToken(res.token) })
-
+        return loggedIn && roles.includes(neededRole)
     }
 
     const makeOptions = (method, addToken, body) =>

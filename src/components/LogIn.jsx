@@ -1,16 +1,14 @@
 import { useState } from "react";
 
-export default function LogIn({ login })
+export default function LogIn({ facade, setLoggedIn, setErrorMessage })
 {
     const init = { username: "", password: "" };
     const [loginCredentials, setLoginCredentials] = useState(init);
 
-
     const performLogin = (evt) =>
     {
         evt.preventDefault();
-        login(loginCredentials.username, loginCredentials.password)
-
+        facade.login(loginCredentials.username, loginCredentials.password, setLoggedIn, setErrorMessage)
     }
     const onChange = (evt) =>
     {
@@ -25,9 +23,6 @@ export default function LogIn({ login })
                 <input placeholder="Password" id="password" />
                 <button onClick={performLogin}>Login</button>
             </form>
-
-
-
         </div>
     )
 

@@ -5,7 +5,7 @@ import Jokes from './components/Jokes.jsx';
 import Webscraper from './components/Webscraper';
 import NoMatch from './components/NoMatch.jsx';
 import facade from './facade';
-import { Container } from 'react-bootstrap';
+import { Container, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react';
 
@@ -18,12 +18,13 @@ function App() {
   const logout = () => {
     facade.logout();
     setLoggedIn(false);
+    setErrorMessage('Logged out.')
   };
 
   return (
     <Container>
       <Router>
-        <Header facade={facade} />
+        <Header facade={facade} loggedIn={loggedIn} />
         <Switch>
           <Route exact path="/">
             <Home
@@ -35,17 +36,19 @@ function App() {
             />
           </Route>
           <Route path="/jokes">
-            {facade.hasUserAccess('user') && <Jokes facade={facade} />}
+            {facade.hasUserAccess('user', loggedIn) && 
+              <Jokes facade={facade} setErrorMessage={setErrorMessage} />}
           </Route>
           <Route path="/webscraper">
-            {facade.hasUserAccess('admin') && <Webscraper facade={facade} />}
+            {facade.hasUserAccess('admin', loggedIn) && 
+              <Webscraper facade={facade} setErrorMessage={setErrorMessage} />}
           </Route>
           <Route path="*">
             <NoMatch />
           </Route>
         </Switch>
       </Router>
-      <p>Status: {errorMessage}</p>
+      <Alert className="mt-4" >Status: {errorMessage}</Alert>
     </Container>
   );
 }
